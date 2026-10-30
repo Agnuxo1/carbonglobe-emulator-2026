@@ -1,0 +1,6 @@
+numpy>=1.26,<3
+pandas>=2.0
+scipy>=1.11
+torch>=2.4
+lightgbm>=4.5
+kaggle>=1.6

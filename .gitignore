@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+# Competition and benchmark data are licensed for non-commercial academic use
+# only and are NOT redistributed here. Download them yourself (see README).
+data/
+work/
+*.npy
+*.npz
+*.csv
+!manifest/*.csv
+*.pt
+*.joblib

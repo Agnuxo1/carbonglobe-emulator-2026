@@ -1,0 +1,41 @@
+{
+ "exp": "A_n400_1leak",
+ "model": "hrc_onestep",
+ "mse_rollout_y40": 0.18083367192586264,
+ "mse_height": 0.1518415971883138,
+ "mse_agb": 0.20982574666341147,
+ "mse_warm_sites": 0.2795930993398031,
+ "n_val_pairs": 37500,
+ "n_fit_samples": 25860600,
+ "d": 545,
+ "reservoir": {
+  "size": 400,
+  "seed": 0,
+  "rho": 0.9,
+  "leaks": [
+   0.3
+  ],
+  "square": false,
+  "ridge": 10.0
+ },
+ "anomaly_drivers": true,
+ "n_bad_channels": 25,
+ "minutes": 0.77,
+ "args": {
+  "exp": "A_n400_1leak",
+  "size": 400,
+  "seed": 0,
+  "spectral_radius": 0.9,
+  "leak": 0.3,
+  "ridge": 10.0,
+  "chunk": 120,
+  "fit_sites": 0,
+  "val_sites": 2500,
+  "year_lo": 1,
+  "year_hi": 40,
+  "no_anomaly": false,
+  "warm_channel": 0,
+  "leaks": null,
+  "square": false
+ }
+}

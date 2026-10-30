@@ -1,0 +1,28 @@
+{
+ "exp": "AB_nnhrc_s1",
+ "model": "nn_plus_hrc",
+ "mse_rollout_y40": 0.06712417393366496,
+ "mse_height": 0.06534111779530843,
+ "mse_agb": 0.06890723007202149,
+ "mse_warm_sites": 0.12287147706051668,
+ "n_val_pairs": 37500,
+ "n_params": 756743,
+ "din": 444,
+ "hrc_dim": 300,
+ "minutes": 3.74,
+ "args": {
+  "exp": "AB_nnhrc_s1",
+  "hidden": 512,
+  "depth": 3,
+  "epochs": 8,
+  "tf_epochs": 3,
+  "lr": 0.002,
+  "chunk": 96,
+  "val_sites": 2500,
+  "seed": 1,
+  "no_anomaly": false,
+  "hrc_dim": 300,
+  "leaks": "0.1,0.3,0.7",
+  "spectral_radius": 0.9
+ }
+}
