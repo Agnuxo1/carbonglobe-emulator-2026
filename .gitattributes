@@ -1,0 +1,3 @@
+# Keep every file byte-identical across platforms: manifest/MANIFEST.json hashes
+# the working tree, and line-ending normalisation would break those hashes in CI.
+* -text

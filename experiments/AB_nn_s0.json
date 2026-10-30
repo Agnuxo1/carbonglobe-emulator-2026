@@ -1,0 +1,28 @@
+{
+ "exp": "AB_nn_s0",
+ "model": "nn_onestep",
+ "mse_rollout_y40": 0.06938411187489828,
+ "mse_height": 0.06918013465881348,
+ "mse_agb": 0.06958808909098307,
+ "mse_warm_sites": 0.1037314474304517,
+ "n_val_pairs": 37500,
+ "n_params": 603143,
+ "din": 144,
+ "hrc_dim": 0,
+ "minutes": 2.92,
+ "args": {
+  "exp": "AB_nn_s0",
+  "hidden": 512,
+  "depth": 3,
+  "epochs": 8,
+  "tf_epochs": 3,
+  "lr": 0.002,
+  "chunk": 96,
+  "val_sites": 2500,
+  "seed": 0,
+  "no_anomaly": false,
+  "hrc_dim": 0,
+  "leaks": "0.1,0.3,0.7",
+  "spectral_radius": 0.9
+ }
+}

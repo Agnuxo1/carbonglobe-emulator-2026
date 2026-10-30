@@ -1,0 +1,7 @@
+{
+ "linear in log-age (current)": 0.17986991858210608,
+ "linear in age": 0.1787699999188662,
+ "monotone PCHIP in log-age": 0.18180983067207623,
+ "cubic spline in log-age": 0.18577576118453984,
+ "bracket mean (no weighting)": 0.17332113042274735
+}
