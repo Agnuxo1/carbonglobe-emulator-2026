@@ -4,6 +4,8 @@ Emulating a process-based global land-ecosystem model (Ecosystem Demography, ED)
 enough to forecast, for 6171 forest sites and 15 seed forest ages under two future
 emission scenarios, the **canopy height and aboveground biomass 40 years out**.
 
+See [TECHNICAL_REPORT.md](TECHNICAL_REPORT.md) for the full write-up.
+
 Entry for the [IEEE BigData Cup 2026 AI Emulation Challenge](https://www.kaggle.com/competitions/ieee-bigdata-cup-2026-ai-emulation-challenge),
 built on the CarbonGlobe benchmark (Wang et al., NeurIPS 2025). Metric: MSE on each
 variable divided by its global mean. Author: Francisco Angulo de Lafuente

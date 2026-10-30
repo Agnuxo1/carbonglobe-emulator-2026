@@ -31,11 +31,12 @@
   "src/train_gbdt.py": "372a932318703172",
   "src/unpack_test.py": "31796c48abeaf2e8",
   "tests/test_hrc_port.py": "0c22dd3f1bb04a86",
-  "README.md": "a7db448133e08b4c",
+  "README.md": "b2654b0b51f8fe37",
+  "TECHNICAL_REPORT.md": "cfcf4b6be48c8dea",
   "ATTRIBUTION.md": "2b9499da5f0da73e",
   "LICENSE": "afa3de7e3edd0ad1",
   "requirements.txt": "c2a02a4643e46a14",
   "reproduce.sh": "3e92e21d7ac22d98",
-  "manifest/build_manifest.py": "d161ccd847cc0c8f"
+  "manifest/build_manifest.py": "4f0407b89f625776"
  }
 }
