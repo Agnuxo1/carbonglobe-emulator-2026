@@ -1,0 +1,30 @@
+{
+ "exp": "IM_clamp_hyb_e24",
+ "model": "nn_plus_hrc",
+ "mse_rollout_y40": 0.046729552504221596,
+ "mse_height": 0.04140690272013346,
+ "mse_agb": 0.052052202288309736,
+ "mse_warm_sites": 0.07501575057494143,
+ "n_val_pairs": 37500,
+ "n_params": 756743,
+ "din": 444,
+ "hrc_dim": 300,
+ "clamped": true,
+ "minutes": 13.07,
+ "args": {
+  "exp": "IM_clamp_hyb_e24",
+  "hidden": 512,
+  "depth": 3,
+  "epochs": 24,
+  "tf_epochs": 12,
+  "lr": 0.002,
+  "chunk": 96,
+  "val_sites": 2500,
+  "seed": 1,
+  "no_anomaly": false,
+  "hrc_dim": 300,
+  "no_clamp": false,
+  "leaks": "0.1,0.3,0.7",
+  "spectral_radius": 0.9
+ }
+}

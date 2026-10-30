@@ -28,7 +28,7 @@ is the main finding of this work.**
 | **age-shifted anchor, nothing fitted** | 0.1799 | **0.094** | **best system measured** |
 | LightGBM direct 40-year regression | 0.0425 | **0.257** | 6.0x worse than its own validation |
 | Holographic-Reservoir one-step emulator, 40-year rollout | 0.1808 | **0.245** | 1.35x |
-| neural one-step emulator, 40-year rollout | 0.0593 ± 0.0091 | pending | |
+| neural one-step emulator, 40-year rollout | 0.0593 ± 0.0091 | pending | 0.0451 once stabilised, see below |
 
 For scale: the public leaderboard over 218 teams runs from 0.037 (first) through a
 median of 0.092 to 0.24 at the 90th percentile.
@@ -104,6 +104,19 @@ What the reservoir does deliver is training cost: only the readout is fitted, in
 form from all 32.5 million teacher-forced samples in about 50 seconds. That is a real
 property, and it is not enough to make it competitive here.
 
+**A stability fix found afterwards, and what it does to the verdict.** Pushing the control
+from 8 to 24 epochs made it diverge to NaN, every time, at exactly the epoch where teacher
+forcing reaches zero while the one-cycle learning rate is still near its peak: the fed-back
+state leaves the range the one-step map has ever seen and forty compositions of an
+unconstrained increment blow up. Clamping the fed-back state to the physically attainable
+range (`state_bounds`) fixes it and improves the control on its own, 0.0515 -> **0.0451**
+at the same seed, warm-site subset 0.0860 -> 0.0709. Two consequences, both reported:
+the gap to the reservoir alone *widens*; but for the hybrid the gap narrows from 1.24x to
+**1.04x** (0.0467 against 0.0451), which is inside the control's seed-to-seed spread. The
+defensible claim is therefore the weaker one: the reservoir state as an extra input **does
+not help, and costs 33 % more time** -- not that it clearly hurts. The three-seed table
+above remains a fair comparison, since both neural arms ran the identical 8-epoch recipe.
+
 **`pixelflow` was dropped with a measured reason, not an excuse.** It was the planned
 spatial-coupling component, but the 6171 test sites cannot be located on the 0.5°
 grid: matching on the 7 static soil channels gives a nearest-neighbour distance (0.091)
@@ -124,9 +137,11 @@ y40 ≈ anchor + ( rollout(SSP forcing) − rollout(stationary counterfactual) )
 ```
 
 The emulator's systematic bias largely cancels in the difference. This is the standard
-"delta change" construction from climate-impact studies. The learned delta has the
-expected sign: mean +0.0058 for SSP585 against −0.0009 for SSP126, with a per-site
-standard deviation of 0.276. Its leaderboard score is pending.
+"delta change" construction from climate-impact studies. With the stabilised emulator the learned delta
+carries the expected scenario ordering and is far less noisy than with the first one:
+mean +0.0202 under SSP585 against +0.0110 under SSP126, per-site sd 0.124 (it was 0.276
+before the clamp). Correlation between anchor and emulator is 0.935. Its leaderboard score
+is pending.
 
 ## Reproducing
 

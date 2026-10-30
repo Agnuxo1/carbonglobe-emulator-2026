@@ -27,6 +27,7 @@ import torch.nn as nn
 sys.path.insert(0, "src")
 from common import WORK, SUB_SCALE, N_SITE, stats
 import dataset as D
+from common import stats as _stats  # noqa: F401  (stats imported above)
 from hrc_onestep import forcing_norm, build_multi, AGE_COL, DEV
 
 RUNS = WORK / "runs"; RUNS.mkdir(parents=True, exist_ok=True)
@@ -69,10 +70,31 @@ class Batcher:
         return xz, yz
 
 
-def unroll(model, xz, yz, ages_col, teacher, res=None):
+def state_bounds(margin=0.25):
+    """Normalised range the ecosystem state is allowed to take during a rollout.
+
+    Taken from the training trajectories, widened by a margin. Without this the
+    rollout can run away: once the fed-back state leaves the range the one-step map
+    ever saw, the next increment is unconstrained and 40 compositions of it diverge.
+    With backpropagation through the full unroll that divergence becomes a NaN --
+    observed directly, at the epoch where teacher forcing reaches zero while the
+    learning rate is still near its peak.
+    """
+    _, _, ym, ys = stats()
+    yd = np.load(WORK / "train_ydec.npy", mmap_mode="r")
+    smp = np.asarray(yd[::211], dtype=np.float32).reshape(-1, 7)
+    z = (smp - ym.astype(np.float32)) / (ys + 1e-10).astype(np.float32)
+    lo, hi = z.min(0), z.max(0)
+    span = hi - lo
+    return (torch.as_tensor(lo - margin * span, device=DEV),
+            torch.as_tensor(hi + margin * span, device=DEV))
+
+
+def unroll(model, xz, yz, ages_col, teacher, res=None, bounds=None):
     """Return predicted normalised states for years 1..40, shape (B,40,7).
 
     teacher=1.0 feeds the truth every step, 0.0 feeds the model's own prediction.
+    `bounds` clamps the fed-back state to the physically attainable range.
     """
     S, A = xz.shape[0], yz.shape[1]
     B = S * A
@@ -93,6 +115,8 @@ def unroll(model, xz, yz, ages_col, teacher, res=None):
         else:
             inp = u
         v_next = v + model(inp)
+        if bounds is not None:
+            v_next = torch.clamp(v_next, bounds[0], bounds[1])
         outs.append(v_next)
         v = yy[:, t] if teacher >= 1.0 else (
             v_next if teacher <= 0.0 else
@@ -125,6 +149,7 @@ def main(a):
         val_sites = np.sort(np.random.default_rng(1).choice(val_sites, a.val_sites, False))
     bat = Batcher(prep, ymf, ysf, a.chunk)
     wy = year_weights(0, DEV)
+    bounds = None if a.no_clamp else state_bounds()
     steps_per_epoch = len(fit_sites) // a.chunk
     total = a.epochs * steps_per_epoch
     sched = torch.optim.lr_scheduler.OneCycleLR(opt, a.lr, total_steps=max(total, 2),
@@ -141,7 +166,7 @@ def main(a):
         for i in range(steps_per_epoch):
             s = np.sort(perm[i * a.chunk:(i + 1) * a.chunk])
             xz, yz = bat.get(s)
-            pred = unroll(model, xz, yz, ages_col, teacher, res)
+            pred = unroll(model, xz, yz, ages_col, teacher, res, bounds)
             true = yz.reshape(-1, 41, 7)[:, 1:]
             loss = ((pred - true) ** 2).mean(dim=(0, 2)) @ wy / 40.0
             opt.zero_grad(set_to_none=True)
@@ -162,7 +187,7 @@ def main(a):
         for i in range(0, len(val_sites), a.chunk):
             s = val_sites[i:i + a.chunk]
             xz, yz = bat.get(s)
-            pred = unroll(model, xz, yz, ages_col, 0.0, res)
+            pred = unroll(model, xz, yz, ages_col, 0.0, res, bounds)
             p40 = pred.view(len(s), 15, 40, 7)[:, :, -1, :2] * ys_t[:2] + ym_t[:2]
             t40 = yz[:, :, 40, :2] * ys_t[:2] + ym_t[:2]
             e = ((p40 - t40) / scale) ** 2
@@ -177,7 +202,7 @@ def main(a):
                  mse_height=float(sq[0] / cnt), mse_agb=float(sq[1] / cnt),
                  mse_warm_sites=float(sqw.sum() / (2 * max(cntw, 1))),
                  n_val_pairs=int(cnt), n_params=int(nparam), din=int(din),
-                 hrc_dim=a.hrc_dim, minutes=round((time.time() - t0) / 60, 2),
+                 hrc_dim=a.hrc_dim, clamped=(not a.no_clamp), minutes=round((time.time() - t0) / 60, 2),
                  args=vars(a))
     (RUNS / f"{a.exp}.json").write_text(json.dumps(res_d, indent=1))
     torch.save(model.state_dict(), RUNS / f"{a.exp}.pt")
@@ -197,6 +222,7 @@ if __name__ == "__main__":
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--no-anomaly", action="store_true")
     p.add_argument("--hrc-dim", type=int, default=0)
+    p.add_argument("--no-clamp", action="store_true")
     p.add_argument("--leaks", default="0.1,0.3,0.7")
     p.add_argument("--spectral-radius", type=float, default=0.9)
     main(p.parse_args())
