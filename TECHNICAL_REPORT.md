@@ -152,6 +152,17 @@ falling, and their seed-to-seed spread (±0.0091) is large next to the control-h
 gap. The ablation orders the three arms reliably; it does not pin the size of the gap
 between the two neural arms.
 
+**Stability fix, and its effect on the verdict.** Extending the control to 24 epochs
+diverged to NaN, reproducibly, at the epoch where teacher forcing reaches zero while the
+one-cycle learning rate is still near its peak: the fed-back state leaves the range the
+one-step map has seen and forty compositions of an unconstrained increment blow up.
+Clamping the fed-back state to the physically attainable range, and deferring the teacher-
+forcing anneal to mid-training, fixes it and improves the control on its own — 0.0515 →
+**0.0451** at the same seed, warm subset 0.0860 → 0.0709. This widens the gap to the
+reservoir alone, but narrows the control-hybrid gap from 1.24× to **1.04×** (0.0467 against
+0.0451), inside the control's seed spread. We therefore make only the weaker claim: the
+reservoir state as an extra input does not help, and costs 33 % more compute.
+
 ## 7. Delta-change construction
 
 Since the anchor supplies a well-calibrated level while the emulator generalises poorly
@@ -162,10 +173,10 @@ stationary-climate counterfactual; add the difference to the anchor:
 > ŷ₄₀ = anchor + [ rollout(SSP forcing) − rollout(stationary counterfactual) ]
 
 The emulator's systematic bias largely cancels in the difference, which is the standard
-delta-change construction in climate-impact work. The learned delta carries the
-expected scenario ordering: mean +0.0058 under SSP585 against −0.0009 under SSP126,
-with a per-site standard deviation of 0.276, i.e. small in the mean and strongly
-spatially structured. Its leaderboard score is pending at the time of writing.
+delta-change construction in climate-impact work. With the stabilised emulator the learned delta
+carries the expected scenario ordering and is markedly cleaner: mean +0.0202 under SSP585
+against +0.0110 under SSP126, per-site sd 0.124 against 0.276 before the clamp. Anchor and
+emulator correlate at 0.935. Its leaderboard score is pending at the time of writing.
 
 ## 8. What we would tell the organizers
 

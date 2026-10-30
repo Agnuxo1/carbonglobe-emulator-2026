@@ -11,7 +11,7 @@ import torch.nn as nn
 sys.path.insert(0, "src")
 from common import WORK, COMP, SCENARIOS, AGES, SUB_SCALE, N_SITE, stats
 from hrc_onestep import forcing_norm, build_multi, AGE_COL, DEV
-from nn_onestep import Step, Batcher, unroll, year_weights
+from nn_onestep import Step, Batcher, unroll, year_weights, state_bounds
 
 BAD = np.array(json.loads((WORK / "bad_channels.json").read_text()), dtype=np.int64)
 
@@ -34,6 +34,7 @@ def main(a):
     opt = torch.optim.AdamW(model.parameters(), lr=a.lr, weight_decay=1e-4)
     bat = Batcher(prep, ymf, ysf, a.chunk)
     wy = year_weights(0, DEV)
+    bounds = None if a.no_clamp else state_bounds()
     sites = np.arange(N_SITE)
     spe = len(sites) // a.chunk
     sched = torch.optim.lr_scheduler.OneCycleLR(opt, a.lr, total_steps=a.epochs * spe,
@@ -47,7 +48,7 @@ def main(a):
         for i in range(spe):
             s = np.sort(perm[i * a.chunk:(i + 1) * a.chunk])
             xz, yz = bat.get(s)
-            pred = unroll(model, xz, yz, ages_col, teacher, res)
+            pred = unroll(model, xz, yz, ages_col, teacher, res, bounds)
             loss = ((pred - yz.reshape(-1, 41, 7)[:, 1:]) ** 2).mean(dim=(0, 2)) @ wy / 40.0
             opt.zero_grad(set_to_none=True); loss.backward()
             nn.utils.clip_grad_norm_(model.parameters(), 1.0)
@@ -80,10 +81,10 @@ def main(a):
                     (np.concatenate([y0b[:, :, None, :],
                                      np.zeros((y0b.shape[0], 15, 40, 7), np.float32)],
                                     axis=2) - ymf) / ysf, device=DEV)
-                pred = unroll(model, xz, yz, ages_col, 0.0, res)
+                pred = unroll(model, xz, yz, ages_col, 0.0, res, bounds)
                 p40 = pred.view(y0b.shape[0], 15, 40, 7)[:, :, -1, :2] * ys_t[:2] + ym_t[:2]
                 outs.append(p40.cpu().numpy())
-                prs = unroll(model, xz_stat, yz, ages_col, 0.0, res)
+                prs = unroll(model, xz_stat, yz, ages_col, 0.0, res, bounds)
                 p40s = prs.view(y0b.shape[0], 15, 40, 7)[:, :, -1, :2] * ys_t[:2] + ym_t[:2]
                 outs_stat.append(p40s.cpu().numpy())
                 del xz, xz_stat, yz, pred, prs
@@ -124,4 +125,5 @@ if __name__ == "__main__":
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--hrc-dim", type=int, default=0)
     p.add_argument("--leaks", default="0.1,0.3,0.7")
+    p.add_argument("--no-clamp", action="store_true")
     main(p.parse_args())

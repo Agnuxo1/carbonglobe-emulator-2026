@@ -85,3 +85,39 @@ Ver `ABLACION_H1.md`, generado desde `E:/ai-emulation-work/runs/AB_*.json`.
   construcción «delta change» habitual en estudios de impacto climático.
 - La selección final se hace contra el leaderboard con pocos candidatos claramente distintos,
   porque no hay validación local fiable para ordenarlos.
+
+## Segunda tanda (30-10, tras medir la calibración local↔leaderboard)
+
+| id | sistema | validación local (rollout) | nota |
+|---|---|---|---|
+| AB_nn_s0/s1/s2 | control neuronal, 8 épocas sin cota | 0,0593 ± 0,0091 | brazo de control de la ablación |
+| AB_nnhrc_s0/s1/s2 | híbrido, 8 épocas sin cota | 0,0733 ± 0,0059 | 1,24× el control |
+| AB_hrc_s0/s1/s2 | HRC solo, N=801, 3 fugas, cuadrática | 0,1528 ± 0,0031 | 2,58× el control |
+| IM_nn_e24_h512 | control neuronal, 24 épocas **sin** cota | **NaN** | divergió al anularse el teacher forcing en el pico del LR |
+| IM_nn_e24_h768d4 | ídem, más ancho, sin cota | **NaN** | misma causa |
+| IM_clamp_e24_h512 | control neuronal, 24 épocas **con cota** | **0,0451** | mejor sistema entrenado; cálidos 0,0709 |
+| IM_clamp_hyb_e24 | híbrido, 24 épocas con cota | 0,0467 | 1,04× el control, dentro del ruido entre semillas |
+
+Los dos NaN se registran tal cual: son el fallo que motivó la cota física del estado, y la
+cota mejora el control por sí sola (0,0515 → 0,0451 con la misma semilla) además de
+permitir triplicar las épocas.
+
+### Interpolador del ancla (comparación de fórmulas sin ajustar)
+
+| variante | local |
+|---|---|
+| media de las dos edades que lo acotan | 0,17332 |
+| lineal en la edad | 0,17877 |
+| lineal en log-edad (la usada) | 0,17987 |
+| PCHIP monótono en log-edad | 0,18181 |
+| spline cúbica en log-edad | 0,18578 |
+
+Rango total 0,173–0,186: la interpolación **no** es el cuello de botella del ancla, así que
+no se gastó más esfuerzo ahí. El residuo del ancla es el efecto real del cambio de clima.
+
+### Delta climático (construcción «delta change»)
+
+Rollout con el forzamiento SSP menos rollout con la anomalía de los 25 drivers desplazados
+puesta a cero, con el emulador mejorado: media +0,0156, sd 0,124, y el orden de escenarios
+es el correcto (SSP585 +0,0202 frente a SSP126 +0,0110). Con el emulador anterior la sd era
+0,276, es decir mucho más ruido. Correlación ancla–emulador 0,935.
