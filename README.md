@@ -205,6 +205,13 @@ against 0.076 for the neural emulator alone: the reservoir drags the mixture dow
 15 % effective weight. Their predictions correlate at 0.915, so the diversity is real; it
 simply is not useful diversity.
 
+**More capacity does not help.** A wider, longer-trained emulator (768x4, 36 epochs) collapses
+when teacher forcing is fully removed -- rollout loss 0.0165 at epoch 12 rising to 0.1301 at
+epoch 18 -- and plateaus at 0.128, far above the 0.0451 the 512x3 model reaches. The run also hit
+host-memory exhaustion at epoch 27 with 0.69 GB free. The 512x3 recipe is kept; the emulator is
+still short of its ceiling in *epochs* but appears to be at it in *width* for this rollout
+objective.
+
 **Fitting the anchor on present-day data hurts it**, even minimally: a 60-parameter per-age
 affine recalibration takes it from 0.094 to **0.137**.
 

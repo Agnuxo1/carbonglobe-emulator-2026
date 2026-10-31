@@ -156,3 +156,37 @@ Tabla de calibración local↔leaderboard con los ocho puntos ya medidos:
 
 La razón crece monótonamente con lo ajustado que está el sistema. Es el resultado
 metodológico del trabajo.
+
+## Más capacidad no ayuda (31-10)
+
+Hipótesis: con la receta estable (cota del estado + anulación del teacher forcing a mitad), un
+emulador más ancho y más entrenado debería bajar del 0,0451 de rollout local.
+
+Resultado: **rechazada.** El modelo de 768×4 con 36 épocas colapsa al anular el teacher forcing
+—pérdida de rollout 0,0165 en la época 12 (teacher 0,33) → 0,1301 en la 18 (teacher 0,00)— y se
+estanca en 0,128 sin recuperarse, muy por encima del que alcanza el de 512×3. El run además se
+quedó sin RAM del equipo en la época 27 (0,69 GB libres, con otras sesiones trabajando), así que
+paré mi propio proceso de ajuste con todos los sitios en vez de competir por memoria.
+
+Decisión: se conserva la receta de **512×3, 24 épocas, con cota** como lado entrenado de la mezcla,
+y no se gasta más cómputo en capacidad. El emulador sigue sin estar en su techo en *épocas*, pero
+sí parece estarlo en *anchura* con este objetivo de rollout.
+
+| config | épocas | pérdida al anular el teacher forcing | rollout y40 local |
+|---|---|---|---|
+| 512×3 con cota | 24 | se mantiene baja | **0,0451** |
+| 768×4 con cota | 36 | 0,0165 → 0,1301, estancada en 0,128 | no converge (run sin RAM en la época 27) |
+| 512×3 sin cota | 24 | — | NaN |
+| 768×4 sin cota | 24 | — | NaN |
+
+## Candidatos construidos y verificados para la cola siguiente
+
+Todos con un control de identidad que comprueba que reproducen exactamente el envío de 0,076
+cuando el peso se vuelve uniforme (diferencia 0,0 y 1e-06 respectivamente):
+
+| candidato | idea | qué tiene de distinto |
+|---|---|---|
+| `C06_selfcal_w0.309_s1` | **pesos autocalibrados**: `w ∝ 1/(1+(r/τ)²)` con `r = |rollout estacionario − ancla|` | la señal sale **solo del test** (inputs y los dos rollouts del propio emulador), sin tocar ningún objetivo del presente, y se reescala para que la media de `w` sea 0,309, el óptimo uniforme ya medido. Así el envío prueba si **condicionar** ayuda, no si ayuda otra media |
+| `C06_selfcal_sharp_w0.309_s0.5` | ídem, más agresivo (τ a la mitad) | mide la pendiente del efecto |
+| `C04_pervar_h0.3_a0.45` y `C04_pervar_h0.45_a0.3` | un peso por variable | altura y agb tienen errores distintos; las dos direcciones, para no suponer de qué lado cae el óptimo |
+| `C05_perage_0.2to0.4` | peso creciente con la edad semilla | el error del ancla crece con la edad (0,0107 a edad 1 y 0,0678 a edad 500 en local) |
