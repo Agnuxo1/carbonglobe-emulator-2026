@@ -11,7 +11,9 @@
  "files": {
   "src/anchor_variants.py": "3f70e7156f82954b",
   "src/blend.py": "c8d0dcbeeee24b42",
+  "src/blend_cond.py": "105a1a8bfbe12daa",
   "src/blend_multi.py": "9757c5312bbdf81d",
+  "src/blend_selfcal.py": "d19605278cdfc4e2",
   "src/blend_weights.py": "14162c0d8f9b063f",
   "src/build_features.py": "3b81c7aaceafb139",
   "src/build_onestep.py": "2a3896e6a4cd230a",
@@ -33,7 +35,7 @@
   "src/train_gbdt.py": "372a932318703172",
   "src/unpack_test.py": "31796c48abeaf2e8",
   "tests/test_hrc_port.py": "0c22dd3f1bb04a86",
-  "README.md": "34523a560a1fe559",
+  "README.md": "ffc972f990038a57",
   "TECHNICAL_REPORT.md": "3036a80f3382e1de",
   "ATTRIBUTION.md": "2b9499da5f0da73e",
   "LICENSE": "afa3de7e3edd0ad1",
