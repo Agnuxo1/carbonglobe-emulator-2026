@@ -165,18 +165,28 @@ matched budget, three seeds per arm:
 
 | arm | MSE year 40 (mean ± sd, 3 seeds) | warm sites | min/seed |
 |---|---|---|---|
-| Holographic-Reservoir + ridge readout (N = 801, 3 leak rates, quadratic readout) | 0.1528 ± 0.0031 | 0.2384 | 5.4 |
-| neural control (residual MLP on the rollout) | **0.0593 ± 0.0091** | 0.0996 | 2.8 |
-| hybrid (control + reservoir state as 300 extra inputs) | 0.0733 ± 0.0059 | 0.1294 | 3.7 |
+| Holographic-Reservoir + ridge readout (N = 801, 3 leak rates, quadratic readout) | 0.1528 ± 0.0031 | 0.2384 | 5.3 |
+| **neural control** (residual MLP on the rollout) | **0.0489 ± 0.0026** | 0.0710 | 7.1 |
+| hybrid (control + reservoir state as 300 extra inputs) | 0.0497 ± 0.0037 | 0.0852 | 9.0 |
 
-The reservoir is 2.58× the control's MSE on its own, and the intervals do not overlap. Two
-caveats in both directions: the neural arms ran 8 epochs with the loss still falling, so the
-ablation orders the arms reliably but does not pin the gap size; and under the later
-stabilised recipe the control–hybrid gap narrows from 1.24× to 1.04× (0.0467 against
-0.0451), inside the control's seed spread, so the defensible claim about the reservoir as an
-extra input is the weaker one — **it does not help, and costs 33 % more time** — not that it
-clearly hurts. An independent three-way least-squares fit on held-out sites assigns the
-reservoir a weight of 0.016 against 0.806 for the neural emulator, which points the same way.
+All three arms now run the identical stabilised recipe (state clamp, 24 epochs, teacher
+forcing annealed to mid-training) at three seeds each, so this replaces the earlier
+8-epoch table, which was reported with a non-convergence caveat. It moves in both
+directions and both are stated:
+
+* **The rejection of H1 is stronger.** The reservoir alone goes from 2.58× to **3.13×** the
+  control's MSE, and the control's spread tightens from ±0.0091 to ±0.0026. The intervals
+  are now separated by a wide margin.
+* **The hybrid improves, and that must be said.** It goes from 1.24× to **1.02×**: a
+  difference of 0.0008 against standard deviations of 0.0026 and 0.0037. The correct claim is
+  no longer that it is worse, but that **the reservoir state as an extra input is
+  indistinguishable from the control on the metric, and costs 27 % more time** (9.0 against
+  7.1 minutes per seed). There is still no reason to use it, but the reason is cost, not
+  accuracy. This is a result in the own technology's favour relative to what was published
+  before, and it is recorded here with the same prominence.
+
+An independent three-way least-squares fit on held-out sites assigns the reservoir a weight
+of 0.016 against 0.806 for the neural emulator, pointing the same way as the table above.
 
 What the reservoir does deliver is training cost: only the readout is fitted, in closed form
 from all 32 491 200 teacher-forced samples in about 50 s. That is real, and it is not enough

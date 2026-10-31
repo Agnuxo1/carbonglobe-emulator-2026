@@ -49,3 +49,36 @@ Dos lecturas honestas:
 La tabla de 3 semillas de arriba sigue siendo valida como comparacion: ambos brazos
 neuronales corrieron la *misma* receta de 8 epocas, asi que la comparacion es justa,
 aunque ninguno estuviera convergido.
+
+## Ablacion CONVERGIDA (31-10, en server-ia, job 9462de440dcc4c17)
+
+Esta es la tabla que sustituye a la de 8 epocas. Misma receta estabilizada para los tres
+brazos (cota del estado, 24 epocas, teacher forcing anulado a mitad), 3 semillas por brazo,
+mismos sitios retenidos y misma metrica. 1,55 h de GPU, exit 0.
+
+| brazo | MSE ano 40 (media +- sd, 3 semillas) | valores | sitios calidos | min/semilla |
+|---|---|---|---|---|
+| HRC solo (N=801, 3 fugas, lectura cuadratica) | 0,1528 +- 0,0031 | 0,1560 / 0,1498 / 0,1526 | 0,2384 | 5,3 |
+| **control neuronal** (MLP residual sobre el rollout) | **0,0489 +- 0,0026** | 0,0516 / 0,0463 / 0,0488 | 0,0710 | 7,1 |
+| hibrido (control + estado del reservorio) | 0,0497 +- 0,0037 | 0,0504 / 0,0457 / 0,0530 | 0,0852 | 9,0 |
+
+Que cambia respecto a la version sin converger, en los dos sentidos:
+
+1. **El rechazo de H1 se refuerza.** El reservorio solo pasa de 2,58x a **3,13x** el MSE del
+   control, y la dispersion del control baja de +-0,0091 a +-0,0026: converger estrecho el
+   intervalo y separo mas los brazos. Los intervalos siguen sin solaparse, ahora con mucho
+   mas margen.
+2. **El hibrido mejora su posicion y hay que decirlo.** Pasa de 1,24x a **1,02x**: la
+   diferencia con el control es 0,0008, muy por debajo de las desviaciones (0,0026 y 0,0037).
+   La afirmacion correcta ya no es «no aporta», sino que **el estado del reservorio como
+   entrada adicional es indistinguible del control en la metrica, y cuesta un 27 % mas de
+   tiempo** (9,0 frente a 7,1 min por semilla). Sigue sin haber razon para usarlo, pero por
+   coste, no por precision.
+
+Este segundo punto es un resultado **a favor** de la tecnologia propia frente a lo que se
+habia publicado, y se recoge aqui con la misma prominencia por el compromiso que dejo JEV al
+autorizar el trabajo (`jev/20261031-gpu/answer.json`, `publish_if_reverses` 0,81).
+
+Lo que no cambia: el reservorio solo sigue muy por detras; el peso que le da una regresion a
+tres bandas sobre sitios retenidos sigue siendo 0,016 frente a 0,806 del emulador neuronal; y
+promediar los dos emuladores empeoro la mezcla en el leaderboard (0,082 frente a 0,076).
