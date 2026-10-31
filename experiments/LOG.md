@@ -121,3 +121,38 @@ Rollout con el forzamiento SSP menos rollout con la anomalía de los 25 drivers 
 puesta a cero, con el emulador mejorado: media +0,0156, sd 0,124, y el orden de escenarios
 es el correcto (SSP585 +0,0202 frente a SSP126 +0,0110). Con el emulador anterior la sd era
 0,276, es decir mucho más ruido. Correlación ancla–emulador 0,935.
+
+## Cola de envíos del 31-10 (5/5) — el blend bate al ancla
+
+| # | candidato | pregunta | LB | puesto aprox. | veredicto |
+|---|---|---|---|---|---|
+| 6 | `C01_anchor_affine` | ¿una calibración mínima del presente (60 parámetros) ayuda al ancla? | 0,137 | ~144 | **no**: empeora el ancla (0,094). Se activa la regla de parada: no se vuelve a ajustar nada contra la validación del presente |
+| 7 | `S06_nn_clamp` | ¿el emulador neuronal mejorado (0,0451 local) bate al ancla? | 0,166 | ~164 | no. Razón LB/local **3,68×**: el mejor rollout local transfiere peor que el malo |
+| 8 | `C02_delta_v2` | ¿el delta climático corrige el ancla? | 0,109 | ~130 | **no**: la construcción «delta change» empeora el ancla. No se escala el delta |
+| 9 | **`C_blend_v2_w0.3`** | ¿la mezcla ancla/emulador bate a las dos por separado? | **0,076** | **~71** | **sí, −19 % sobre el ancla.** Mejor sistema del concurso |
+| 10 | `C03_blend_twoemu_w0.3` | ¿aporta diversidad usar la media de los dos emuladores? | 0,082 | ~78 | no: el reservorio arrastra la mezcla hacia abajo incluso al 15 % efectivo |
+
+Parábola por los tres puntos de la mezcla (0,094 con w=0; 0,076 con w=0,3; 0,166 con w=1):
+óptimo en **w = 0,309**. El peso enviado ya era el óptimo, así que reajustarlo no da nada.
+
+### Los pesos de mezcla tampoco se pueden elegir en local (`experiments/blend_weights.json`)
+
+Sobre los sitios retenidos del presente, el peso óptimo ancla/emulador sale **w = 0,837**
+—casi el emulador puro— cuando el leaderboard dice **0,309**. Haber hecho caso a la
+validación local habría dado algo cercano a 0,166 en vez de 0,076. En la misma regresión a
+tres bandas, los pesos óptimos locales son ancla 0,169 / neuronal 0,806 / **reservorio
+0,016**: una confirmación independiente más de que el reservorio no aporta.
+
+Tabla de calibración local↔leaderboard con los ocho puntos ya medidos:
+
+| sistema | local | LB | razón |
+|---|---|---|---|
+| constante por edad | 1,6455 | 1,542 | 0,94 |
+| persistencia | 0,2962 | 0,285 | 0,96 |
+| ancla cruda | 0,1799 | 0,094 | 0,52 |
+| emulador HRC (rollout) | 0,1808 | 0,245 | 1,35 |
+| emulador neuronal (rollout) | 0,0451 | 0,166 | 3,68 |
+| LightGBM directo | 0,0425 | 0,257 | 6,05 |
+
+La razón crece monótonamente con lo ajustado que está el sistema. Es el resultado
+metodológico del trabajo.
