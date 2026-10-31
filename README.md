@@ -4,9 +4,9 @@
 
 # CarbonGlobe year-40 emulation — IEEE BigData Cup 2026
 
-[![ci](https://github.com/Agnuxo1/carbonglobe-emulator-2026/actions/workflows/ci.yml/badge.svg)](https://github.com/Agnuxo1/carbonglobe-emulator-2026/actions/workflows/ci.yml) [![licence: MIT](https://img.shields.io/badge/licence-MIT-199e70?style=flat-square)](LICENSE) ![python: 3.12](https://img.shields.io/badge/python-3.12-3987e5?style=flat-square&logo=python&logoColor=white) [![public leaderboard: 0.076 MSE, ~71 / 218](https://img.shields.io/badge/public%20leaderboard-0.076%20MSE,%20~71%20/%20218-199e70?style=flat-square)](https://www.kaggle.com/competitions/ieee-bigdata-cup-2026-ai-emulation-challenge) [![hypothesis H1: rejected](https://img.shields.io/badge/hypothesis%20H1-rejected-d95926?style=flat-square)](experiments/ABLACION_H1.md) ![status: pending independent audit](https://img.shields.io/badge/status-pending%20independent%20audit-c98500?style=flat-square) [![data: not redistributed](https://img.shields.io/badge/data-not%20redistributed-5b6785?style=flat-square)](ATTRIBUTION.md)
+[![ci](https://github.com/Agnuxo1/carbonglobe-emulator-2026/actions/workflows/ci.yml/badge.svg)](https://github.com/Agnuxo1/carbonglobe-emulator-2026/actions/workflows/ci.yml) [![licence: MIT](https://img.shields.io/badge/licence-MIT-199e70?style=flat-square)](LICENSE) ![python: 3.12](https://img.shields.io/badge/python-3.12-3987e5?style=flat-square&logo=python&logoColor=white) [![public leaderboard: 0.076 MSE, ~71 / 218](https://img.shields.io/badge/public%20leaderboard-0.076%20MSE,%20~71%20/%20218-199e70?style=flat-square)](https://www.kaggle.com/competitions/ieee-bigdata-cup-2026-ai-emulation-challenge) [![age-shifted anchor: 0.094, zero training](https://img.shields.io/badge/age--shifted%20anchor-0.094,%20zero%20training-3987e5?style=flat-square)](#how-it-works) [![data: not redistributed](https://img.shields.io/badge/data-not%20redistributed-5b6785?style=flat-square)](ATTRIBUTION.md)
 
-[**How it works**](#how-it-works) · [**Results**](#results) · [**Observations**](#observations-and-limitations) · [**Technical report**](TECHNICAL_REPORT.md) · [**H1 ablation**](experiments/ABLACION_H1.md) · [**Bibliography**](#bibliography)
+[**How it works**](#how-it-works) · [**Results**](#results) · [**Technical report**](TECHNICAL_REPORT.md) · [**Reproducing**](#reproducing) · [**Observations**](#observations-and-limitations) · [**Bibliography**](#bibliography)
 
 </div>
 
@@ -36,7 +36,7 @@ Competition open until 2026-11-16 05:00 UTC.
 
 **Contents** — [How it works](#how-it-works) · [Background](#background) · [Results](#results) · [Reproducing](#reproducing) · [Observations and limitations](#observations-and-limitations) · [Real-world applications](#real-world-applications) · [Possible improvements](#possible-improvements) · [Future work](#future-work) · [Bibliography](#bibliography)
 
-<p align="center"><img src="docs/readme/02-headline.gif" alt="Bars comparing this entry, the field median, the leader and persistence on the public leaderboard" width="100%"><br><sub>Fig. 1 — Public leaderboard, lower is better. The competition is open and the private split is unscored. Data: the table above.</sub></p>
+<p align="center"><img src="docs/readme/02-headline.gif" alt="Bars comparing this entry, the field median, the leader and persistence on the public leaderboard" width="100%"><br><sub>Fig. 1 — Public leaderboard, lower is better: 0.076 against a field median of 0.092. Competition open until 2026-11-16. Data: the table above.</sub></p>
 
 ## How it works
 
@@ -86,7 +86,7 @@ Local held-out rollout MSE at year 40: **0.0451**. On the leaderboard, alone, 0.
   compositions of an unconstrained increment blow up. Clamping fixes that and improves the
   model on its own, 0.0515 → **0.0451** at the same seed, warm-site subset 0.0860 → 0.0709.
 
-<p align="center"><img src="docs/readme/05-blend-weight.gif" alt="A parabola through three measured leaderboard points, with the local optimum marked far from it" width="100%"><br><sub>Fig. 4 — The blend weight. Data: README and src/blend_weights.py.</sub></p>
+<p align="center"><img src="docs/readme/05-blend-weight.gif" alt="A parabola through three measured leaderboard points, with the submitted weight next to its optimum" width="100%"><br><sub>Fig. 4 — The blend weight: submitted at 0.3, parabola optimum 0.309. Data: README and src/blend_weights.py.</sub></p>
 
 ### 3. The blend — 19 % off the anchor's score
 
@@ -146,7 +146,7 @@ test set.
 | persistence, y₄₀ = y₀ | 0.2962 | 0.285 | ~211 |
 | per-age constant | 1.6455 | 1.542 | ~217 |
 
-<p align="center"><img src="docs/readme/08-ratio.gif" alt="Bars of leaderboard error divided by local error, from 0.52 for the anchor to 6.05 for LightGBM" width="100%"><br><sub>Fig. 7 — Local validation does not rank models here. Data: the ratio table below.</sub></p>
+<p align="center"><img src="docs/readme/08-ratio.gif" alt="Bars of leaderboard error divided by local error, from 0.52 for the anchor to 6.05 for LightGBM" width="100%"><br><sub>Fig. 7 — Leaderboard-to-local ratios: unfitted predictors transfer almost exactly. Data: the ratio table below.</sub></p>
 
 ### The methodological result: this benchmark's held-out validation does not rank models
 
@@ -188,7 +188,7 @@ them as within-record anomalies instead (`src/shift_report.py`).
 
 ## Reproducing
 
-<p align="center"><img src="docs/readme/10-reproduce.gif" alt="Terminal running the offline CI steps: modules parse, imports ok, manifest hashes match" width="100%"><br><sub>Fig. 9 — A real local run of the CI steps that need no install, 31 Oct 2026.</sub></p>
+<p align="center"><img src="docs/readme/10-reproduce.gif" alt="Terminal running the CI steps: modules parse, imports ok, the reservoir port matches its library, manifest hashes match" width="100%"><br><sub>Fig. 9 — Every ci.yml check passes in a real local run on CPU, 31 Oct 2026 (the reservoir-port test ran on a copy with holographic-reservoir installed outside the repository).</sub></p>
 
 ```bash
 pip install -r requirements.txt
