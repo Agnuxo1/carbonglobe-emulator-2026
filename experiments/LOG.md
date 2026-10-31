@@ -233,3 +233,20 @@ Dos fallos de camino que conviene no repetir:
   **raíz** de una unidad: construye `-C "E:\"` y la barra final escapa la comilla en `cmd`.
   Hay que subir desde un nivel más abajo.
 - Los datasets grandes no van por `puente subir` directo, sino empaquetados en .tar.
+
+## Resultados del trabajo GPU (31-10, job 9462de440dcc4c17, exit 0, 1,55 h)
+
+**Ablacion convergida**: ver `ABLACION_H1.md`. Resumen: HRC 0,1528 +- 0,0031, control
+0,0489 +- 0,0026, hibrido 0,0497 +- 0,0037. El rechazo de H1 se refuerza (2,58x -> 3,13x) y
+el hibrido pasa a ser indistinguible del control (1,24x -> 1,02x), lo segundo a favor de la
+tecnologia propia y recogido con la misma prominencia.
+
+**Ensamblado por semillas**: las tres semillas nuevas (2, 3, 4) ajustadas sobre los 54152
+sitios, ~9,5 min cada una, con sus predicciones crudas del ano 40 y las del contrafactual
+estacionario. Con la semilla 1 ya ajustada en local son cuatro. Dispersion entre semillas
+sd media 0,1204 (hay varianza real que promediar), correlacion media entre pares 0,9667. El
+promedio correlaciona 0,9389 con el ancla, algo mas que una sola semilla (0,9351).
+
+Candidatos construidos: `C07_ens4_w0.309` (mismo peso que el optimo medido, para aislar el
+efecto del ensamblado) y `C07_ens4_w0.4` (porque un emulador con menos varianza podria
+merecer mas peso). Pendientes de la cuota, que se renueva a las 00:00 UTC del 1-11.
