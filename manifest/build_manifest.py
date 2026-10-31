@@ -6,6 +6,7 @@ import json
 import os
 
 TRACKED = (sorted(glob.glob("src/*.py")) + sorted(glob.glob("tests/*.py")) +
+           sorted(glob.glob("servidor/*.py")) +
            ["README.md", "TECHNICAL_REPORT.md", "ATTRIBUTION.md", "LICENSE", "requirements.txt",
             "reproduce.sh", "manifest/build_manifest.py"])
 

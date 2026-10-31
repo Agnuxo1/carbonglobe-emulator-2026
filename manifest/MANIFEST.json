@@ -35,12 +35,15 @@
   "src/train_gbdt.py": "372a932318703172",
   "src/unpack_test.py": "31796c48abeaf2e8",
   "tests/test_hrc_port.py": "0c22dd3f1bb04a86",
+  "servidor/humo.py": "35253161b71f64bc",
+  "servidor/preparar_datos.py": "7e96fbd5c6a8a1ab",
+  "servidor/run.py": "a2db5b68fdf199e4",
   "README.md": "ffc972f990038a57",
   "TECHNICAL_REPORT.md": "3036a80f3382e1de",
   "ATTRIBUTION.md": "2b9499da5f0da73e",
   "LICENSE": "afa3de7e3edd0ad1",
   "requirements.txt": "c2a02a4643e46a14",
   "reproduce.sh": "3e92e21d7ac22d98",
-  "manifest/build_manifest.py": "4f0407b89f625776"
+  "manifest/build_manifest.py": "fc4aabb6b1da6ddf"
  }
 }

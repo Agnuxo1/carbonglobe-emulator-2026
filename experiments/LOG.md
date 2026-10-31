@@ -190,3 +190,46 @@ cuando el peso se vuelve uniforme (diferencia 0,0 y 1e-06 respectivamente):
 | `C06_selfcal_sharp_w0.309_s0.5` | ídem, más agresivo (τ a la mitad) | mide la pendiente del efecto |
 | `C04_pervar_h0.3_a0.45` y `C04_pervar_h0.45_a0.3` | un peso por variable | altura y agb tienen errores distintos; las dos direcciones, para no suponer de qué lado cae el óptimo |
 | `C05_perage_0.2to0.4` | peso creciente con la edad semilla | el error del ancla crece con la edad (0,0107 a edad 1 y 0,0678 a edad 500 en local) |
+
+## Trabajo GPU declarado en la cola (31-10, 05:49 UTC)
+
+Las dos RTX 3090 estaban paradas y el carril `gpu1` quedó asignado a `ai-emulation` hasta el
+1-11 05:49 UTC. Decisión de JEV (`jev/20261031-gpu/answer.json`, provenance=jev,
+remote_decision=true): `what_to_queue=both_one_job` (0,41), `order=ensemble_first` (0,46),
+`ensemble_size`≈3 (0,72), `ablation_scope=all_three_arms` (0,61), y **`publish_if_reverses`
+0,81**, que me compromete a publicar con la misma prominencia que el rechazo actual si la
+ablación convergida revirtiera o estrechara el veredicto sobre la tecnología propia.
+
+Trabajo `ai-emulation-ensamblado-y-ablacion` en `gpu-feeder/RESPALDO_GPU.json`, dos piezas:
+
+1. **Ensamblado por semillas** del emulador de la mezcla: semillas 2, 3 y 4 de la receta
+   estabilizada 512×3 con cota, 24 épocas, sobre los 54152 sitios, guardando la predicción
+   cruda del año 40 y la del contrafactual estacionario. Es el único eje que queda, porque la
+   capacidad ya está medida como inútil.
+2. **Ablación convergida** de los tres brazos de H1 con esa misma receta y 3 semillas por
+   brazo, para sustituir la tabla publicada, que corrió 8 épocas sin converger.
+
+Preparación, toda verificada antes de declarar nada:
+
+- El venv compartido `/home/ai/venvs/training` trae torch 2.14.1+cu130 con CUDA disponible y
+  la cola lo activa sola. Le falta `holographic_reservoir` y el README **prohíbe instalar en
+  el entorno compartido**, así que la librería va vendorizada en la carpeta del trabajo
+  (Apache-2.0, solo stdlib y numpy; mi código ya lo soportaba por `HRC_SRC`).
+- Los datos (2,3 GB) no caben en el envío del trabajo (límite de 2 GiB), así que fueron por
+  el puente **como .tar**, extraídos en `/home/ai/datos-ai-emulation` —fuera del espejo, para
+  que una subida posterior no los pise— y verificados en el servidor: 11 archivos, formas
+  `(54152,40,136)` y `(54152,15,41,7)`, muestras finitas. El tar se borró después (2,24 GiB
+  liberados en un disco compartido con 31 GiB).
+- **Prueba de humo completa en CPU por el puente** con valores mínimos y
+  `CUDA_VISIBLE_DEVICES` vacío, para no usar GPU fuera de la cola: los tres brazos y el
+  ensamblado corren, escriben sus JSON y el reservorio vendorizado funciona (d=343,
+  25 860 600 ejemplos con teacher forcing). Es así como descargué la señal de segunda opinión
+  de JEV (0,81): una verificación **ejecutada** en el entorno real vale más que una lectura.
+- Cada resultado se escribe en cuanto termina y al reanudar se salta lo ya hecho, porque el
+  trabajo corre sin nadie mirando y el carril se puede perder.
+
+Dos fallos de camino que conviene no repetir:
+- El puente falla con «Cowardly refusing to create an empty archive» si la carpeta está en la
+  **raíz** de una unidad: construye `-C "E:\"` y la barra final escapa la comilla en `cmd`.
+  Hay que subir desde un nivel más abajo.
+- Los datasets grandes no van por `puente subir` directo, sino empaquetados en .tar.
