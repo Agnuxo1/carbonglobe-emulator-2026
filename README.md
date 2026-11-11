@@ -38,6 +38,10 @@ Competition open until 2026-11-16 05:00 UTC.
 
 <p align="center"><img src="docs/readme/02-headline.gif" alt="Bars comparing this entry, the field median, the leader and persistence on the public leaderboard" width="100%"><br><sub>Fig. 1 — Public leaderboard, lower is better: 0.076 against a field median of 0.092. Competition open until 2026-11-16. Data: the table above.</sub></p>
 
+<!-- impact-note:start -->
+<sub><strong>Efficiency and practical value.</strong> The age-shifted anchor reuses each site's supplied forest-age curve to form a forecast without fitted parameters or model training. Blending it with the neural emulator improves the reported public result over persistence while retaining a simple reference. This supports economical ecosystem-scenario research; it does not demonstrate actual carbon removal or emissions savings. See the <a href="#how-it-works">method</a> and <a href="#results">recorded comparisons</a>.</sub>
+<!-- impact-note:end -->
+
 ## How it works
 
 Three ingredients, listed by how much each contributes.
