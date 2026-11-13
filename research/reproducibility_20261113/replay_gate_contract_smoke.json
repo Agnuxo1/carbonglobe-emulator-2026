@@ -1,0 +1,27 @@
+{
+  "status": "PASS",
+  "test_kind": "synthetic_orchestration_contract",
+  "gpu_used": false,
+  "emulator_inference_performed": false,
+  "checks": {
+    "complete_cartesian_id_product": true,
+    "finite_nonnegative_schema": true,
+    "two_synthetic_passes_and_saved_receipt": true,
+    "literal_replay_identity": true,
+    "historic_reference_separate": true,
+    "six_manifest_boundaries": true,
+    "different_historical_prediction_is_new_candidate": true,
+    "nonfinite_rejected": true,
+    "negative_rejected": true,
+    "id_order_rejected": true,
+    "row_count_rejected": true,
+    "header_rejected": true,
+    "manifest_asset_tampering_rejected": true,
+    "integrity_failure_saved_without_launching": true,
+    "tolerance_nan_rejected": true,
+    "tolerance_inf_rejected": true,
+    "bounded_child_timeout": true,
+    "venv_interpreter_symlink_preserved": true
+  },
+  "wrapper_sha256": "c1de7d79409ba075da3ba67695b69a847cd2d0db879192bfde74a5572ab1318b"
+}

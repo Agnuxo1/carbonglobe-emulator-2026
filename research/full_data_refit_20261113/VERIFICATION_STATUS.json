@@ -1,0 +1,23 @@
+{
+  "implementation_status": "prepared; production not started",
+  "source_sha256": "73a96a2d93fca61833e419e4efac6a09563ca8c5f75910b05937b2405ff35fcb",
+  "portable_primitives_sha256": "8d03ba50841828ca27e20661b9a02aa6aaeb034409defd6db3245a03f4b6fe5f",
+  "compilation": "PASS",
+  "mathematical_contract_smoke": "PASS",
+  "independent_static_review": "No blockers identified in reviewed code; not a runtime training certification",
+  "feature_parity": "PASS; original climate features and 635 feature names in seven cases",
+  "synthetic_training_reload_smoke": {
+    "status": "NOT_RUN",
+    "reason": "PyTorch and LightGBM are absent from both scratch Python environments; remote device is offline"
+  },
+  "production_training": "NOT_RUN",
+  "production_prediction_replay": "NOT_RUN",
+  "expected_fixed_lengths_manifest_sha256": "06d4beef87f9880e8afe493dff1029d5cbf7a28ad7dd5ab0661eca2972cd5358",
+  "exact_fixed_lengths_manifest_in_scratch": false,
+  "original_fixed_lengths_manifest_locations": [
+    "Windows repository research/full_data_refit_20261113/PROPOSED_FIXED_LENGTHS.json",
+    "Linux clone research/full_data_refit_20261113/PROPOSED_FIXED_LENGTHS.json"
+  ],
+  "manifest_reconstruction_attempted": false,
+  "network_or_submission_actions_performed": false
+}

@@ -1,0 +1,17 @@
+{
+  "checks": [
+    "seven-state decoder round-trip",
+    "auxiliary bytes preserved",
+    "116/635 feature dimensions and age ordering",
+    "519 forcing summary arithmetic",
+    "4/16 epochs and 32128 fixed tree rounds",
+    "original seed/parameter contract",
+    "float64 family mixture without rounding",
+    "elapsed-time guard"
+  ],
+  "lightgbm_imported": false,
+  "passed": true,
+  "refit_code_sha256": "73a96a2d93fca61833e419e4efac6a09563ca8c5f75910b05937b2405ff35fcb",
+  "scope": "pure mathematical and policy checks; no training smoke",
+  "torch_imported": false
+}

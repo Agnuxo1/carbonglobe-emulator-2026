@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "scope": "Isolated scratch fixture only; no Windows or remote Git operations",
+  "commits_created": 0,
+  "source_sha256": "ad9db7c95c1b44d941d79fda49424a2a78b66d48018546e1d2c858cd9179a239",
+  "default_fixture_files": 10,
+  "expanded_fixture_files": 13,
+  "checks": [
+    "untracked code and JSON excluded",
+    "tracked ignored private sentinels excluded",
+    "historical default scope preserved",
+    "optional tracked research/docs scope",
+    "NUL-separated Unicode and space-containing paths",
+    "manifest self-exclusion",
+    "raw CRLF bytes preserved",
+    "published CI hash condition",
+    "deterministic output",
+    "builder leaves index and .gitattributes unchanged",
+    "missing tracked file fails before replacing the manifest",
+    "external symlink rejected before replacing the manifest"
+  ]
+}
